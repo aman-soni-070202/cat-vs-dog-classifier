@@ -12,7 +12,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Define the same transforms used in training
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
-    transforms.ToTensor()
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406], 
+        std=[0.229, 0.224, 0.225]
+    )
 ])
 
 # Load the testing data
@@ -23,7 +27,7 @@ test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 # model = CNNModelV1().to(device)
 # model = CNNModelV2().to(device)
 model = ResNetTransfer().to(device)
-pth_path = 'models/cat_dog_cnn_resnet.pth'
+pth_path = 'models/cat_dog_cnn_resnet_v1.pth'
 checkpoint = torch.load(pth_path)
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()

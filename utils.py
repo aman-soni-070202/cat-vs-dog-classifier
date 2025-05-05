@@ -23,12 +23,20 @@ class Utils:
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(10),
             transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-            transforms.ToTensor()
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406], 
+                std=[0.229, 0.224, 0.225]
+            )
         ])
 
         val_test_transforms = transforms.Compose([
             transforms.Resize((128, 128)),
-            transforms.ToTensor()
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406], 
+                std=[0.229, 0.224, 0.225]
+            )
         ])
 
         # Load full dataset
@@ -50,9 +58,9 @@ class Utils:
         return train_loader, val_loader
 
     @staticmethod
-    def get_model_optimizer_best_loss_resnet(device: torch.device, learning_rate: float):
+    def get_model_optimizer_best_loss_resnet(device: torch.device, learning_rate: float, version: str):
         model = ResNetTransfer(num_classes=2, freeze_base=True)
-        pth_path = 'models/cat_dog_cnn_resnet.pth'
+        pth_path = f'models/cat_dog_cnn_resnet_v{version}.pth'
 
         trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
         print(f"🔧 Trainable parameters: {trainable_params}")
@@ -64,11 +72,18 @@ class Utils:
             model.load_state_dict(checkpoint['model_state_dict'])
         model.to(device)
 
-        optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate)
+        optimizer = optim.Adam(model.model.fc.parameters(), lr=learning_rate)
         best_loss = float('inf')
 
         if checkpoint:
             optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+
+            # Move optimizer tensors to the correct device
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if isinstance(v, torch.Tensor):
+                        state[k] = v.to(device)
+
             if 'best_loss' in checkpoint:
                 best_loss = checkpoint['best_loss']
 

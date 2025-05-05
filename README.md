@@ -140,11 +140,6 @@ Output:
 
 ---
 
-## 📸 Example Usage (Coming Soon)
-> Upload an image and see whether it’s a 🐱 or 🐶!
-
----
-
 ## 🙌 Acknowledgements
 - [PyTorch](https://pytorch.org/)
 - [Torchvision](https://pytorch.org/vision/stable/index.html)

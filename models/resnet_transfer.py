@@ -16,6 +16,8 @@ class ResNetTransfer(nn.Module):
         # Replace the final fully connected layer to match binary classification
         num_features = self.model.fc.in_features
         self.model.fc = nn.Linear(num_features, num_classes)
+        for param in self.model.fc.parameters():
+            param.requires_grad = True
 
     def forward(self, x):
         return self.model(x)  # Outputs logits for 2 classes

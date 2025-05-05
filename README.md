@@ -52,7 +52,6 @@ Dataset should follow the folder structure compatible with `torchvision.datasets
 
 ---
 
-
 Images should be resized to `128x128` or similar for consistent input shape.
 
 ---
@@ -79,6 +78,8 @@ Training logs show:
 - `models/resnet_transfer.py` — Transfer learning with ResNet18
 - `utils.py` — Helper methods for loading data, saving/loading checkpoints, etc.
 - `train.py` — Main training loop for selected model
+- `test.py` — Main test loop for selected model
+- `predict.py` — Main prediction algo by using selected model and on a single or multiple images
 
 ---
 
@@ -92,7 +93,7 @@ Training logs show:
 
 ---
 
-🔍 How to Predict
+## 🔍 How to Predict
 
 To classify new images using the trained model, use predict.py.
 
@@ -154,4 +155,4 @@ MIT License
 
 ## 🙌 Credits
 
-Created by Aman as a part of learning deep learning fundamentals from scratch.
+Created by Aman Soni as a part of learning deep learning fundamentals from scratch.

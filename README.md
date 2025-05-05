@@ -34,14 +34,21 @@ This project is a deep learning-based binary image classifier that distinguishes
 
 Dataset should follow the folder structure compatible with `torchvision.datasets.ImageFolder`:
 
-data/
-└── training_set/
-├── cats/
-│ ├── cat1.jpg
-│ ├── ...
-└── dogs/
-├── dog1.jpg
-├── ...
+```
+├── data/
+│ └── train_set/ # Training images (cats and dogs in subfolders)
+│ └── test_set/ # Testing images (cats and dogs in subfolders)
+├── models/
+│ ├── cnn_model_v1.py # Basic 2-layer CNN
+│ ├── cnn_model_v2.py # 3-layer CNN with BatchNorm and Dropout
+│ └── resnet_transfer.py # Pretrained ResNet18 with fine-tuned final layer
+├── train.py # Training loop
+├── test.py # Model evaluation script
+├── predict.py # Predicts class of a given image or folder of images
+├── utils.py # Utility functions (like loading model/optimizer)
+├── requirements.txt
+└── README.md
+```
 
 ---
 
@@ -85,6 +92,46 @@ Training logs show:
 
 ---
 
+🔍 How to Predict
+
+To classify new images using the trained model, use predict.py.
+
+`python predict.py --img_path "./samples/my_image.jpg" --model_path "models/cat_dog_cnn_resnet.pth"`
+
+Arguments:
+
+    --img_path: Path to the image or folder of images
+
+    --model_path: Path to the trained .pth file
+
+    --model_type: Choose from v1, v2, or resnet (default: resnet)
+
+Example:
+
+`python predict.py --img_path "./samples/cat1.jpg" --model_type resnet`
+
+Output:
+
+```✅ Image: cat1.jpg → Prediction: Cat```
+
+---
+
+## 📦 Requirements
+
+`pip install -r requirements.txt`
+
+---
+
+## 📌 Notes
+
+    The models expect images to be resized to 128x128.
+
+    If you’re using the ResNet model, only the final layer is trained. You can optionally unfreeze deeper layers to fine-tune further.
+
+    The model assumes label 0 is cat and label 1 is dog based on folder names in training data.
+
+---
+
 ## 🛠 Future Improvements
 - Implement **early stopping**
 - Add **data augmentation**
@@ -107,3 +154,9 @@ Training logs show:
 
 ## 📄 License
 MIT License
+
+---
+
+## 🙌 Credits
+
+Created by Aman as a part of learning deep learning fundamentals from scratch.

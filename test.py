@@ -4,6 +4,7 @@ from torchvision import datasets, transforms
 
 from models.cnn_model_v1 import CNNModelV1
 from models.cnn_model_v2 import CNNModelV2
+from models.resnet_transfer import ResNetTransfer
 
 # Device configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -19,8 +20,10 @@ test_dataset = datasets.ImageFolder(root='./data/test_set/test_set', transform=t
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
 # Load model
-model = CNNModelV2().to(device)
-pth_path = 'models/cat_dog_cnn_v2.pth'
+# model = CNNModelV1().to(device)
+# model = CNNModelV2().to(device)
+model = ResNetTransfer().to(device)
+pth_path = 'models/cat_dog_cnn_resnet.pth'
 checkpoint = torch.load(pth_path)
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()

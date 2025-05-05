@@ -4,12 +4,11 @@ import torch.nn as nn
 from utils import Utils
 
 
-pth_path = 'models/cat_dog_cnn_v2_1.pth'
 training_data_path = './data/training_set/training_set'
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 criterion = nn.CrossEntropyLoss()
-model, optimizer, best_loss = Utils.get_model_optimizer_best_loss(device, pth_path, learning_rate=0.001)
+model, optimizer, best_loss, pth_path = Utils.get_model_optimizer_best_loss_resnet(device, learning_rate=0.0015)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.5)
 
 

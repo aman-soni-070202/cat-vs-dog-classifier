@@ -1,11 +1,14 @@
 import os
 import torch
 import torch.optim as optim
+import torch.nn as nn
 from torchvision import datasets, transforms
+import torchvision.models as tv_models
 from torch.utils.data import DataLoader, random_split
 
-from models.cnn_model import CNNModel
+from models.cnn_model_v1 import CNNModelV1
 from models.cnn_model_v2 import CNNModelV2
+from models.resnet_transfer import ResNetTransfer
 
 
 class Utils:
@@ -47,9 +50,34 @@ class Utils:
         return train_loader, val_loader
 
     @staticmethod
-    def get_model_optimizer_best_loss(device: torch.device, pth_path: str, learning_rate: float):
-        # model = CNNModel()
-        model = CNNModelV2()
+    def get_model_optimizer_best_loss_resnet(device: torch.device, learning_rate: float):
+        model = ResNetTransfer(num_classes=2, freeze_base=True)
+        pth_path = 'models/cat_dog_cnn_resnet.pth'
+
+        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print(f"🔧 Trainable parameters: {trainable_params}")
+
+        checkpoint = None
+        if os.path.exists(pth_path):
+            checkpoint = torch.load(pth_path, map_location=device)
+            print("✅ Loaded checkpoint from:", pth_path)
+            model.load_state_dict(checkpoint['model_state_dict'])
+        model.to(device)
+
+        optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=learning_rate)
+        best_loss = float('inf')
+
+        if checkpoint:
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            if 'best_loss' in checkpoint:
+                best_loss = checkpoint['best_loss']
+
+        return model, optimizer, best_loss, pth_path
+
+    @staticmethod
+    def get_model_optimizer_best_loss_custom(device: torch.device, learning_rate: float, version: int):
+        model = CNNModelV1() if version == 1 else CNNModelV2()
+        pth_path = 'models/cat_dog_cnn_v1.pth' if version == 1 else 'models/cat_dog_cnn_v2.pth'
 
         checkpoint = None
         if os.path.exists(pth_path):
@@ -66,4 +94,4 @@ class Utils:
             if 'best_loss' in checkpoint:
                 best_loss = checkpoint['best_loss']
 
-        return model, optimizer, best_loss
+        return model, optimizer, best_loss, pth_path

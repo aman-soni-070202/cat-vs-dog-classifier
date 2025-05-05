@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-from models.cnn_model import CNNModel
+from models.cnn_model_v1 import CNNModelV1
 from models.cnn_model_v2 import CNNModelV2
 
 # Device configuration
